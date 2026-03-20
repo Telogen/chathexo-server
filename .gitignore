@@ -1,0 +1,25 @@
+# 配置文件
+config/config.json
+config/system_prompt.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# 虚拟环境
+.venv/
+venv/
+ENV/
+
+# 数据文件
+data/*.json
+
+# 日志
+*.log
+
+# 开发文档
+AGENTS.md
+TODO.md
