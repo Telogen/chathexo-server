@@ -2,12 +2,11 @@
 import logging
 import sys
 from functools import lru_cache
-from typing import Optional
 import httpx
 
 
 # 配置日志格式
-LOG_FORMAT = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+LOG_FORMAT = "%(asctime)s | %(levelname)-8s | %(message)s"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
@@ -53,10 +52,9 @@ def get_ip_location(ip: str) -> str:
     """
     # 跳过本地 IP
     if ip in ["127.0.0.1", "localhost", "::1"]:
-        return "本地"
+        return "local"
     
     try:
-        # 使用 ipinfo.io API
         response = httpx.get(f"https://ipinfo.io/{ip}/json", timeout=2.0)
         if response.status_code == 200:
             data = response.json()
@@ -64,13 +62,52 @@ def get_ip_location(ip: str) -> str:
             region = data.get("region", "")
             country = data.get("country", "")
             
-            # 组合位置信息
             parts = [p for p in [city, region, country] if p]
-            return ", ".join(parts) if parts else "未知"
+            return ", ".join(parts) if parts else "unknown"
         else:
-            return "未知"
+            return "unknown"
     except Exception:
-        return "未知"
+        return "unknown"
+
+
+def log_page_visit(
+    client_ip: str,
+    location: str,
+    page_url: str,
+) -> None:
+    """记录用户访问页面日志
+
+    Args:
+        client_ip: 客户端 IP 地址
+        location: IP 归属地
+        page_url: 用户访问的页面 URL
+    """
+    logger.info(
+        f"Visit | IP: {client_ip} ({location}) | Page: {page_url}"
+    )
+
+
+def log_user_query(
+    client_ip: str,
+    location: str,
+    referer: str,
+    model_id: str,
+    query: str,
+) -> None:
+    """记录用户提问日志
+
+    Args:
+        client_ip: 客户端 IP 地址
+        location: IP 归属地
+        referer: 用户当前访问的页面 URL
+        model_id: 使用的模型 ID
+        query: 用户问题
+    """
+    logger.info(
+        f"💬 Query | IP: {client_ip} ({location}) | "
+        f"Page: {referer} | Model: {model_id} | "
+        f"Q: {query}"
+    )
 
 
 def get_client_ip(request) -> str:
