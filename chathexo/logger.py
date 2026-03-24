@@ -2,6 +2,7 @@
 import logging
 import sys
 from functools import lru_cache
+from urllib.parse import unquote
 import httpx
 
 
@@ -83,7 +84,7 @@ def log_page_visit(
         page_url: 用户访问的页面 URL
     """
     logger.info(
-        f"Visit | IP: {client_ip} ({location}) | Page: {page_url}"
+        f"Visit | IP: {client_ip} ({location}) | Page: {unquote(page_url)}"
     )
 
 
@@ -104,8 +105,8 @@ def log_user_query(
         query: 用户问题
     """
     logger.info(
-        f"💬 Query | IP: {client_ip} ({location}) | "
-        f"Page: {referer} | Model: {model_id} | "
+        f"💬💬💬 Query 💬💬💬 | IP: {client_ip} ({location}) | "
+        f"Page: {unquote(referer)} | Model: {model_id} | "
         f"Q: {query}"
     )
 
