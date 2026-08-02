@@ -4,9 +4,6 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Dict
-
-
 class Settings:
     """配置类 - 从 config.json 读取"""
 
@@ -34,13 +31,11 @@ class Settings:
         self.posts_dirs_list = blog.get("posts_dirs", [])
         self.index_path = blog.get("index_path", "data/index.json")
         
-        # Providers 配置
-        self._providers = config.get("providers", {})
-        
-        # 模型配置
-        models = config.get("models", {})
-        self.default_model = models.get("default", "local-Qwen3.5-35B-A3B")
-        self._available_models = models.get("available", {})
+        # 固定模型配置
+        model = config.get("model", {})
+        self.model = model.get("name", "gpt-5.6-sol-azure")
+        self.base_url = model.get("base_url", "")
+        self.api_key = model.get("api_key", "")
         
         # Agent 配置 - 从文件读取系统提示词
         agent = config.get("agent", {})
@@ -61,28 +56,5 @@ class Settings:
         with open(prompt_path, "r", encoding="utf-8") as f:
             return f.read().strip()
     
-    @property
-    def available_models(self) -> Dict:
-        """可用模型列表 - 自动从 provider 填充 base_url 和 api_key"""
-        models = {}
-        for model_id, model_config in self._available_models.items():
-            config = model_config.copy()
-            
-            # 获取 provider 配置
-            provider_name = config.pop("provider", None)
-            if provider_name and provider_name in self._providers:
-                provider = self._providers[provider_name]
-                config["base_url"] = provider.get("base_url", "")
-                config["api_key"] = provider.get("api_key", "")
-            else:
-                # 如果没有指定 provider 或 provider 不存在，使用默认值
-                config.setdefault("base_url", "")
-                config.setdefault("api_key", "")
-            
-            models[model_id] = config
-        
-        return models
-
-
 # 全局配置实例
 settings = Settings()

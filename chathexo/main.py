@@ -4,7 +4,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 import uvicorn
 
 from chathexo.settings import settings
@@ -26,10 +26,11 @@ app.add_middleware(
 
 
 class ChatRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     query: str
     thread_id: str | None = None
     indexUrl: str | None = None
-    model: str | None = None  # 新增：指定使用的模型
 
 
 class ChatResponse(BaseModel):
@@ -43,21 +44,6 @@ class ChatResponse(BaseModel):
 async def health():
     """健康检查"""
     return {"ok": True}
-
-
-@app.get("/chathexo-api/models")
-async def get_models():
-    """获取可用模型列表"""
-    models = []
-    for model_id, config in settings.available_models.items():
-        models.append({
-            "id": model_id,
-            "name": config["display_name"],
-        })
-    return {
-        "models": models,
-        "default": settings.default_model,
-    }
 
 
 class VisitRequest(BaseModel):
@@ -81,7 +67,6 @@ async def chat(chat_request: ChatRequest, request: Request):
         return ChatResponse(mode="error", answer="query is required", thread_id="", tool_calls=[])
 
     thread_id = chat_request.thread_id if chat_request.thread_id else str(uuid.uuid4())
-    model_id = chat_request.model if chat_request.model else settings.default_model
 
     # 获取客户端信息
     client_ip = get_client_ip(request)
@@ -89,9 +74,9 @@ async def chat(chat_request: ChatRequest, request: Request):
     referer = request.headers.get("referer", "unknown")
 
     # 记录用户问题
-    log_user_query(client_ip, location, referer, model_id, query)
+    log_user_query(client_ip, location, referer, settings.model, query)
 
-    result = agent_answer(query, thread_id=thread_id, model_id=model_id)
+    result = agent_answer(query, thread_id=thread_id)
     result["thread_id"] = thread_id
 
     return ChatResponse(**result)

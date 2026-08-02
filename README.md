@@ -31,9 +31,10 @@ vim config/config.json
 主要配置项：
 
 - `blog.posts_dirs`：博客文章目录的绝对路径（如 `/path/to/your-blog/source/_posts`）
-- `providers`：填入 API Key 和 base_url（支持 OpenAI 兼容接口）
-  - 白嫖 ModelScope API Token 可参考：https://tianlejin.top/blog/claw-daily-ModelScope-Token/
-- `models.default`：设置默认模型
+- `model.base_url`：OpenAI 兼容接口地址
+- `model.api_key`：接口密钥
+
+后端固定使用 `gpt-5.6-sol-azure`，不支持由客户端选择或覆盖模型。
 
 ### 启动服务
 
@@ -64,9 +65,6 @@ ps aux | grep "chathexo.main" | grep -v grep | awk '{print $2}' | xargs kill
 ```bash
 # 健康检查
 curl http://127.0.0.1:4317/chathexo-api/health
-
-# 获取可用模型
-curl http://127.0.0.1:4317/chathexo-api/models
 
 # 单轮对话
 curl -X POST http://127.0.0.1:4317/chathexo-api/chat \

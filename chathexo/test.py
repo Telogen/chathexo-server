@@ -42,7 +42,7 @@ def main() -> int:
 
     from agent import create_my_agent
 
-    agent = create_my_agent(model_id=None)
+    agent = create_my_agent()
     thread_id = f"test-{uuid.uuid4().hex[:8]}"
     config = {"configurable": {"thread_id": thread_id}}
 

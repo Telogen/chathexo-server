@@ -10,45 +10,10 @@
     ],
     "index_path": "data/index.json"
   },
-  "providers": {
-    "modelscope": {
-      "base_url": "https://api-inference.modelscope.cn/v1/",
-      "api_key": "ms-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    },
-    "local": {
-      "base_url": "http://172.21.8.164:12480/v1",
-      "api_key": "123456"
-    }
-  },
-  "models": {
-    "default": "local-Qwen3.5-35B-A3B",
-    "available": {
-      "ms-Qwen3.5-397B": {
-        "provider": "modelscope",
-        "model": "Qwen/Qwen3.5-397B-A17B",
-        "display_name": "Qwen3.5-397B"
-      },
-      "ms-GLM-5": {
-        "provider": "modelscope",
-        "model": "ZhipuAI/GLM-5",
-        "display_name": "GLM-5"
-      },
-      "ms-MiniMax-M2.5": {
-        "provider": "modelscope",
-        "model": "MiniMax/MiniMax-M2.5",
-        "display_name": "MiniMax-M2.5"
-      },
-      "ms-Kimi-K2.5": {
-        "provider": "modelscope",
-        "model": "moonshotai/Kimi-K2.5",
-        "display_name": "Kimi-K2.5"
-      },
-      "local-Qwen3.5-35B-A3B": {
-        "provider": "local",
-        "model": "Qwen3.5-35B-A3B",
-        "display_name": "Qwen3.5-35B (♾️)"
-      }
-    }
+  "model": {
+    "name": "gpt-5.6-sol-azure",
+    "base_url": "http://localhost:3000/v1/",
+    "api_key": "your-api-key"
   },
   "agent": {
     "system_prompt_file": "system_prompt.txt"

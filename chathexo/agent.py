@@ -20,24 +20,12 @@ TOOLS = [
 memory = MemorySaver()
 
 
-def create_my_agent(model_id: str = None):
-    """创建 Agent
-
-    Args:
-        model_id: 模型ID，如果为None则使用默认模型
-    """
-    if model_id is None:
-        model_id = settings.default_model
-
-    model_config = settings.available_models.get(model_id)
-    if not model_config:
-        model_id = settings.default_model
-        model_config = settings.available_models[model_id]
-
+def create_my_agent():
+    """使用服务端固定模型创建 Agent。"""
     llm = ChatOpenAI(
-        base_url=model_config["base_url"],
-        model=model_config["model"],
-        api_key=model_config["api_key"],
+        base_url=settings.base_url,
+        model=settings.model,
+        api_key=settings.api_key,
         temperature=0.5,
     )
 
@@ -53,15 +41,14 @@ def create_my_agent(model_id: str = None):
     return agent
 
 
-def agent_answer(query: str, thread_id: str = "default", model_id: str = None) -> Dict[str, Any]:
+def agent_answer(query: str, thread_id: str = "default") -> Dict[str, Any]:
     """使用 Agent 回答问题
 
     Args:
         query: 用户问题
         thread_id: 会话 ID，用于多轮对话
-        model_id: 模型ID，用于指定使用的模型
     """
-    agent = create_my_agent(model_id)
+    agent = create_my_agent()
 
     try:
         config = {"configurable": {"thread_id": thread_id}}
