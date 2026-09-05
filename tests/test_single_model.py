@@ -20,6 +20,6 @@ def test_chat_request_rejects_model_override():
 
 
 def test_backend_uses_fixed_model():
-    assert settings.model == "gpt-5.6-sol-azure"
+    assert settings.model == "GLM-5.3-Flash"
     assert not hasattr(settings, "default_model")
     assert not hasattr(settings, "available_models")

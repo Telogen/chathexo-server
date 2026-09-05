@@ -34,26 +34,45 @@ vim config/config.json
 - `model.base_url`：OpenAI 兼容接口地址
 - `model.api_key`：接口密钥
 
-后端固定使用 `gpt-5.6-sol-azure`，不支持由客户端选择或覆盖模型。
+后端固定使用配置文件中 `model.name` 指定的模型，不支持由客户端选择或覆盖模型。
 
 ### 启动服务
 
+开发调试时可以在前台运行：
+
 ```bash
-# 前台运行（开发调试）
 uv run python -m chathexo.main
-
-# 后台运行（生产环境）
-nohup uv run python -m chathexo.main > /tmp/chathexo.log 2>&1 &
 ```
 
-服务默认运行在 `http://127.0.0.1:4317`
-
-### 停止服务
+生产环境使用仓库提供的 systemd 用户服务：
 
 ```bash
-# 查找进程并停止
-ps aux | grep "chathexo.main" | grep -v grep | awk '{print $2}' | xargs kill
+mkdir -p ~/.config/systemd/user
+cp deploy/chathexo.service ~/.config/systemd/user/chathexo.service
+systemctl --user daemon-reload
+systemctl --user enable --now chathexo.service
 ```
+
+服务默认运行在 `http://127.0.0.1:4317`。用户已启用 linger 时，即使退出登录，服务也会继续运行并在系统启动后自动恢复。
+
+### 服务管理与日志
+
+```bash
+# 查看状态
+systemctl --user status chathexo.service
+
+# 重启或停止
+systemctl --user restart chathexo.service
+systemctl --user stop chathexo.service
+
+# 查看最近日志
+journalctl --user -u chathexo.service -n 100
+
+# 持续查看日志
+journalctl --user -u chathexo.service -f
+```
+
+服务的标准输出和错误输出由 journald 统一保存和轮转，不再使用 `nohup` 临时日志文件。
 
 
 ---

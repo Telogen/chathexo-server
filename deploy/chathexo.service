@@ -1,0 +1,17 @@
+[Unit]
+Description=ChatHexo blog question-answering backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/tianlejin/myblog/chathexo-server
+ExecStart=/home/tianlejin/.local/bin/uv run python -m chathexo.main
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=chathexo
+
+[Install]
+WantedBy=default.target
